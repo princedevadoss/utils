@@ -1,0 +1,46 @@
+<html>
+    <head>Tester</head>
+    <body>
+        <script src="./utils.js"></script>
+        <script type="text/javascript">
+            var m = [
+                {
+                    a: 1,
+                    b: 2,
+                    c: {
+                        a: 2,
+                        e: 5
+                    }
+                },
+                {
+                    f: 1,
+                    b: 2,
+                    c: 3
+                },
+                {
+                    b: 1,
+                    a: 2,
+                    c: {
+                        a: 2,
+                        e: 5
+                    }
+                },{
+                    ta: 1,
+                    c: 2,
+                    a: 3
+                }
+            ];
+            var result = ut
+            .changeKeys(m, 'a', 'd')
+            .changeKeys('c', 'e')
+            .every(function(el) {
+                return el['e'];
+            })
+            .filter(function(el) {
+                return Object.keys(el).length === 3;
+            })
+            .val();
+            console.log(result);
+        </script>
+    </body>
+</html>

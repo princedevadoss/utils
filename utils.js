@@ -104,6 +104,20 @@ function _findObjectKeys(obj, matchKeys, val) {
     return val;
 }
 
+function _deepFindObjectKeys(obj, matchKeys, val) {
+    for(var element in obj) {
+        if((typeof obj[element] === 'object')) {
+            val[element] = !(matchKeys.includes(element)) ? _deepFindObjectKeys(obj[element], matchKeys, {}) : obj[element];
+        }
+        else {
+            if(matchKeys.includes(element)) {
+                val[element] = obj[element];
+            }
+        }
+    }
+    return val;
+}
+
 function _changeObjectKeys(obj, matchKey, targetKey, val) {
     for(var element in obj) {
         if(matchKey === element) {
@@ -135,6 +149,13 @@ function _filterObjectKeys(obj, matchKeys) {
     return !this.filterFirstLevelArrayKeys ? process : this;
 }
 
+function _deepFilterObjectKeys(obj, matchKeys) {
+    let process = {};
+    _deepFindObjectKeys(obj, matchKeys, process);
+    this.filterFirstLevelArrayKeys && (this.member = process);
+    return !this.filterFirstLevelArrayKeys ? process : this;
+}
+
 function _filterArrayKeys(arr, matchKey) {
     let process = [];
     for(let element of arr) {
@@ -142,6 +163,42 @@ function _filterArrayKeys(arr, matchKey) {
     }
     this.filterArrayKeys && (this.member = process);
     return !this.filterArrayKeys ? process : this;
+}
+
+function _deepFilterArrayKeys(arr, matchKey) {
+    let process = [];
+    for(let element of arr) {
+        process.push(this.deepFilterObjectKeys.call({}, element, matchKey));
+    }
+    this.deepFilterArrayKeys && (this.member = process);
+    return !this.deepFilterArrayKeys ? process : this;
+}
+
+function _concat(arr1, arr2) {
+    let process = arr1;
+    for(let element of arr2) {
+        process.push(element);
+    }
+    this.concat && (this.member = process);
+    return !this.concat ? process : this;
+}
+
+function _slice(arr, start, end) {
+    let process = [];
+    for(let pos = start; pos < end; pos++) {
+        process.push(arr[pos]);
+    }
+    this.slice && (this.member = process);
+    return !this.slice ? process : this;
+}
+
+function _map(arr, callback) {
+    let process = [];
+    for(let element of arr) {
+        process.push(callback(element));
+    }
+    this.map && (this.member = process);
+    return !this.map ? process : this;
 }
 
 function _common(desiredFn, check, arg1, arg2, type, msg) {
@@ -297,6 +354,66 @@ ut.filterArrayKeys = function(arr, key) {
     return _common.call(
         this, 
         _filterArrayKeys,
+         2,
+         arguments,
+         [this.member, arr],
+         'array',
+         'Please Pass Array data'
+    );
+}
+
+ut.deepFilterObjectKeys = function(obj, key) {
+    return _common.call(
+        this, 
+        _deepFilterObjectKeys,
+         2,
+         arguments,
+         [this.member, obj],
+         'object',
+         'Please Pass Object data'
+    );
+}
+
+ut.deepFilterArrayKeys = function(arr, key) {
+    return _common.call(
+        this, 
+        _deepFilterArrayKeys,
+         2,
+         arguments,
+         [this.member, arr],
+         'array',
+         'Please Pass Array data'
+    );
+}
+
+ut.concat = function(arr1, arr2) {
+    return _common.call(
+        this, 
+        _concat,
+         2,
+         arguments,
+         [this.member, arr1],
+         'array',
+         'Please Pass Array data'
+    );
+}
+
+ut.slice = function(arr, start, end) {
+    return _common.call(
+        this, 
+        _slice,
+         3,
+         arguments,
+         [this.member, arr, start],
+         'array',
+         'Please Pass Array data'
+    );
+}
+
+ut.map = function(arr, callback) {
+    return _common.call(
+        this, 
+        _map,
          2,
          arguments,
          [this.member, arr],

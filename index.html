@@ -31,18 +31,25 @@
                 }
             ];
             var result = ut
-            .changeKeys(m, 'a', 'd')
-            .changeKeys('c', 'e')
-            .changeValues('d', {
-                d: 'change'
-            })
-            .every(function(el) {
-                return el['e'];
-            })
-            .filter(function(el) {
-                return Object.keys(el).length === 3;
-            })
-            .val();
+            .deepFilterObjectKeys({
+                y: 909,
+                a: 1,
+                b: {
+                    t: 89,
+                    y: 56
+                },
+                c: {
+                    g: 12,
+                    h: 56,
+                    i: {
+                        h:45,
+                        j: 90,
+                        a: {
+                            y: 99
+                        }
+                    }
+                }
+            }, 'y').val();
             console.log(result);
         </script>
     </body>

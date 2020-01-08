@@ -22,7 +22,7 @@
                     a: 2,
                     c: {
                         a: 2,
-                        e: 5
+                        t: 5
                     }
                 },{
                     ta: 1,
@@ -33,6 +33,9 @@
             var result = ut
             .changeKeys(m, 'a', 'd')
             .changeKeys('c', 'e')
+            .changeValues('d', {
+                d: 'change'
+            })
             .every(function(el) {
                 return el['e'];
             })

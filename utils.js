@@ -18,6 +18,13 @@ function _changeKey(obj, oldKey, newKey) {
     return !this.changeKey ? process : this;   
 }
 
+function _changeValue(obj, key, value) {
+    let process = {};
+    _changeObjectValues(obj, key, value, process);
+    this.changeValue && (this.member = process);
+    return !this.changeValue ? process : this;   
+}
+
 function _changeKeys(arr, oldKey, newKey) {
     let process = [];
     for(let element of arr) {
@@ -25,6 +32,15 @@ function _changeKeys(arr, oldKey, newKey) {
     }
     this.changeKeys && (this.member = process);
     return !this.changeKeys ? process : this;
+}
+
+function _changeValues(arr, key, value) {
+    let process = [];
+    for(let element of arr) {
+        process.push(this.changeValue.call({}, element, key, value));
+    }
+    this.changeValues && (this.member = process);
+    return !this.changeValues ? process : this;  
 }
 
 function _filter(arr, callback) {
@@ -100,6 +116,18 @@ function _changeObjectKeys(obj, matchKey, targetKey, val) {
     return val;
 }
 
+function _changeObjectValues(obj, key, value, val) {
+    for(var element in obj) {
+        if(key === element) {
+            val[key] = value;
+        }
+        else {
+            val[element] = (typeof obj[element] === 'object') ? _changeObjectValues(obj[element], key, value, {}) : obj[element];
+        }
+    }
+    return val;
+}
+
 function _filterObjectKeys(obj, matchKeys) {
     let process = {};
     _findObjectKeys(obj, matchKeys, process);
@@ -145,6 +173,18 @@ ut.changeKey = function(obj, oldKey, newKey) {
     );
 }
 
+ut.changeValue = function(obj, key, value) {
+    return _common.call(
+        this, 
+         _changeValue,
+         3,
+         arguments,
+         [this.member, obj, key],
+         'object',
+         'Please Pass Object data'
+    );
+}
+
 ut.changeKeys = function(arr, oldKey, newKey) {
     return _common.call(
         this, 
@@ -152,6 +192,18 @@ ut.changeKeys = function(arr, oldKey, newKey) {
          3,
          arguments,
          [this.member, arr, oldKey],
+         'array',
+         'Please Pass Array data'
+    );
+}
+
+ut.changeValues = function(arr, key, value) {
+    return _common.call(
+        this, 
+         _changeValues,
+         3,
+         arguments,
+         [this.member, arr, key],
          'array',
          'Please Pass Array data'
     );

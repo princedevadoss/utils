@@ -31,7 +31,7 @@
                 }
             ];
             var result = ut
-            .deepFilterObjectKeys({
+            .deepFilterArrayKeys([{
                 y: 909,
                 a: 1,
                 b: {
@@ -49,7 +49,12 @@
                         }
                     }
                 }
-            }, 'y').val();
+            },
+            {
+                y: 321
+            }], 'y')
+            .repeat(4)
+            .val();
             console.log(result);
         </script>
     </body>

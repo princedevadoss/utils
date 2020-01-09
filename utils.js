@@ -1,4 +1,4 @@
-let ut = {}
+let ut = {};
 
 ut.member = null;
 
@@ -8,6 +8,8 @@ function checkForType(data, type) {
             return (typeof data === 'object' && data.constructor === Object) ? true : false;
         case 'array':
             return (typeof data === 'object' && data.constructor === Array) ? true : false;
+        case 'both':
+            return (typeof data === 'object') ? true : false;
     }
 }
 
@@ -52,11 +54,23 @@ function _filter(arr, callback) {
     return !this.filter ? process : this;
 }
 
-function _each(arr, callback) {
-    for(let element of arr) {
-        callback(element);
+function _each(item, callback) {
+    let process = [];
+    if(checkForType(item, 'object')) {
+        for(let key in item) {
+            callback(key, item[key]);
+        }
     }
-    return this;
+    else if (checkForType(item, 'array')) {
+        for(let element of item) {
+            callback(element);
+        }
+    }
+    else {
+        throw 'Please pass an object';
+    }
+    this.each && (this.member = process);
+    return !this.each ? process : this;
 }
 
 function _every(arr, callback) {
@@ -201,6 +215,25 @@ function _map(arr, callback) {
     return !this.map ? process : this;
 }
 
+function _repeat(item, count) {
+    let process = [];
+    if(checkForType(item, 'object')) {
+        for(let pos = 0; pos < count; pos++) {
+            process.push(item);
+        }
+    }
+    else if (checkForType(item, 'array')) {
+        for(let pos = 0; pos < count; pos++) {
+            process = this.concat.call({}, process, item);
+        }
+    }
+    else {
+        throw 'Please pass an object';
+    }
+    this.repeat && (this.member = process);
+    return !this.repeat ? process : this;
+}
+
 function _common(desiredFn, check, arg1, arg2, type, msg) {
     if(arg1.length === check) {
         if(!checkForType(arg1[0], type)) {
@@ -285,8 +318,8 @@ ut.each = function(arr, callback) {
          2,
          arguments,
          [this.member, arr],
-         'array',
-         'Please Pass Array data'
+         'both',
+         'Please Pass an Object'
     );
 }
 
@@ -419,6 +452,18 @@ ut.map = function(arr, callback) {
          [this.member, arr],
          'array',
          'Please Pass Array data'
+    );
+}
+
+ut.repeat = function(item, count) {
+    return _common.call(
+        this, 
+        _repeat,
+         2,
+         arguments,
+         [this.member, item],
+         'both',
+         'Please an Object'
     );
 }
 

@@ -1,9 +1,11 @@
-let ut = {};
 
-ut.member = null;
+var ut = (function() {
+let _ut  = {};
+
+_ut .member = null;
 
 function checkForType(data, type) {
-    switch(type) {
+    switch (type) {
         case 'object':
             return (typeof data === 'object' && data.constructor === Object) ? true : false;
         case 'array':
@@ -17,19 +19,19 @@ function _changeKey(obj, oldKey, newKey) {
     let process = {};
     _changeObjectKeys(obj, oldKey, newKey, process);
     this.changeKey && (this.member = process);
-    return !this.changeKey ? process : this;   
+    return !this.changeKey ? process : this;
 }
 
 function _changeValue(obj, key, value) {
     let process = {};
     _changeObjectValues(obj, key, value, process);
     this.changeValue && (this.member = process);
-    return !this.changeValue ? process : this;   
+    return !this.changeValue ? process : this;
 }
 
 function _changeKeys(arr, oldKey, newKey) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         process.push(this.changeKey.call({}, element, oldKey, newKey));
     }
     this.changeKeys && (this.member = process);
@@ -38,16 +40,16 @@ function _changeKeys(arr, oldKey, newKey) {
 
 function _changeValues(arr, key, value) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         process.push(this.changeValue.call({}, element, key, value));
     }
     this.changeValues && (this.member = process);
-    return !this.changeValues ? process : this;  
+    return !this.changeValues ? process : this;
 }
 
 function _filter(arr, callback) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         callback(element) && process.push(element);
     }
     this.filter && (this.member = process);
@@ -56,13 +58,13 @@ function _filter(arr, callback) {
 
 function _each(item, callback) {
     let process = [];
-    if(checkForType(item, 'object')) {
-        for(let key in item) {
+    if (checkForType(item, 'object')) {
+        for (let key in item) {
             callback(key, item[key]);
         }
     }
     else if (checkForType(item, 'array')) {
-        for(let element of item) {
+        for (let element of item) {
             callback(element);
         }
     }
@@ -74,8 +76,8 @@ function _each(item, callback) {
 }
 
 function _every(arr, callback) {
-    for(let element of arr) {
-        if(!callback(element)) {
+    for (let element of arr) {
+        if (!callback(element)) {
             return false;
         }
     }
@@ -83,8 +85,8 @@ function _every(arr, callback) {
 }
 
 function _some(arr, callback) {
-    for(let element of arr) {
-        if(callback(element)) {
+    for (let element of arr) {
+        if (callback(element)) {
             return this;
         }
     }
@@ -93,7 +95,7 @@ function _some(arr, callback) {
 
 function _filterFirstLevelObjectKeys(obj, matchKey) {
     let process = {};
-    for(let key in obj) {
+    for (let key in obj) {
         (matchKey.includes(key)) && (process[key] = obj[key]);
     }
     this.filterFirstLevelObjectKeys && (this.member = process);
@@ -102,7 +104,7 @@ function _filterFirstLevelObjectKeys(obj, matchKey) {
 
 function _filterFirstLevelArrayKeys(arr, matchKey) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         process.push(this.filterFirstLevelObjectKeys.call({}, element, matchKey));
     }
     this.filterFirstLevelArrayKeys && (this.member = process);
@@ -110,8 +112,8 @@ function _filterFirstLevelArrayKeys(arr, matchKey) {
 }
 
 function _findObjectKeys(obj, matchKeys, val) {
-    for(var element in obj) {
-        if(matchKeys.includes(element)) {
+    for (var element in obj) {
+        if (matchKeys.includes(element)) {
             val[element] = (typeof obj[element] === 'object') ? _findObjectKeys(obj[element], matchKeys, {}) : obj[element];
         }
     }
@@ -119,12 +121,12 @@ function _findObjectKeys(obj, matchKeys, val) {
 }
 
 function _deepFindObjectKeys(obj, matchKeys, val) {
-    for(var element in obj) {
-        if((typeof obj[element] === 'object')) {
+    for (var element in obj) {
+        if ((typeof obj[element] === 'object')) {
             val[element] = !(matchKeys.includes(element)) ? _deepFindObjectKeys(obj[element], matchKeys, {}) : obj[element];
         }
         else {
-            if(matchKeys.includes(element)) {
+            if (matchKeys.includes(element)) {
                 val[element] = obj[element];
             }
         }
@@ -133,8 +135,8 @@ function _deepFindObjectKeys(obj, matchKeys, val) {
 }
 
 function _changeObjectKeys(obj, matchKey, targetKey, val) {
-    for(var element in obj) {
-        if(matchKey === element) {
+    for (var element in obj) {
+        if (matchKey === element) {
             val[targetKey] = (typeof obj[element] === 'object') ? _changeObjectKeys(obj[element], matchKey, targetKey, {}) : obj[element];
         }
         else {
@@ -145,8 +147,8 @@ function _changeObjectKeys(obj, matchKey, targetKey, val) {
 }
 
 function _changeObjectValues(obj, key, value, val) {
-    for(var element in obj) {
-        if(key === element) {
+    for (var element in obj) {
+        if (key === element) {
             val[key] = value;
         }
         else {
@@ -172,7 +174,7 @@ function _deepFilterObjectKeys(obj, matchKeys) {
 
 function _filterArrayKeys(arr, matchKey) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         process.push(this.filterObjectKeys.call({}, element, matchKey));
     }
     this.filterArrayKeys && (this.member = process);
@@ -181,7 +183,7 @@ function _filterArrayKeys(arr, matchKey) {
 
 function _deepFilterArrayKeys(arr, matchKey) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         process.push(this.deepFilterObjectKeys.call({}, element, matchKey));
     }
     this.deepFilterArrayKeys && (this.member = process);
@@ -190,7 +192,7 @@ function _deepFilterArrayKeys(arr, matchKey) {
 
 function _concat(arr1, arr2) {
     let process = arr1;
-    for(let element of arr2) {
+    for (let element of arr2) {
         process.push(element);
     }
     this.concat && (this.member = process);
@@ -199,7 +201,7 @@ function _concat(arr1, arr2) {
 
 function _slice(arr, start, end) {
     let process = [];
-    for(let pos = start; pos < end; pos++) {
+    for (let pos = start; pos < end; pos++) {
         process.push(arr[pos]);
     }
     this.slice && (this.member = process);
@@ -208,7 +210,7 @@ function _slice(arr, start, end) {
 
 function _map(arr, callback) {
     let process = [];
-    for(let element of arr) {
+    for (let element of arr) {
         process.push(callback(element));
     }
     this.map && (this.member = process);
@@ -217,13 +219,13 @@ function _map(arr, callback) {
 
 function _repeat(item, count) {
     let process = [];
-    if(checkForType(item, 'object')) {
-        for(let pos = 0; pos < count; pos++) {
+    if (checkForType(item, 'object')) {
+        for (let pos = 0; pos < count; pos++) {
             process.push(item);
         }
     }
     else if (checkForType(item, 'array')) {
-        for(let pos = 0; pos < count; pos++) {
+        for (let pos = 0; pos < count; pos++) {
             process = this.concat.call({}, process, item);
         }
     }
@@ -235,15 +237,15 @@ function _repeat(item, count) {
 }
 
 function _common(desiredFn, check, arg1, arg2, type, msg) {
-    if(arg1.length === check) {
-        if(!checkForType(arg1[0], type)) {
+    if (arg1.length === check) {
+        if (!checkForType(arg1[0], type)) {
             throw msg;
         }
         return desiredFn.apply(this, arg1);
     }
     else {
-        if(this.member) {
-            return  desiredFn.apply(this, arg2);
+        if (this.member) {
+            return desiredFn.apply(this, arg2);
         }
         else {
             throw 'error';
@@ -251,222 +253,225 @@ function _common(desiredFn, check, arg1, arg2, type, msg) {
     }
 }
 
-ut.changeKey = function(obj, oldKey, newKey) {
+_ut .changeKey = function (obj, oldKey, newKey) {
     return _common.call(
-        this, 
-         _changeKey,
-         3,
-         arguments,
-         [this.member, obj, oldKey],
-         'object',
-         'Please Pass Object data'
+        this,
+        _changeKey,
+        3,
+        arguments,
+        [this.member, obj, oldKey],
+        'object',
+        'Please Pass Object data'
     );
 }
 
-ut.changeValue = function(obj, key, value) {
+_ut .changeValue = function (obj, key, value) {
     return _common.call(
-        this, 
-         _changeValue,
-         3,
-         arguments,
-         [this.member, obj, key],
-         'object',
-         'Please Pass Object data'
+        this,
+        _changeValue,
+        3,
+        arguments,
+        [this.member, obj, key],
+        'object',
+        'Please Pass Object data'
     );
 }
 
-ut.changeKeys = function(arr, oldKey, newKey) {
+_ut .changeKeys = function (arr, oldKey, newKey) {
     return _common.call(
-        this, 
-         _changeKeys,
-         3,
-         arguments,
-         [this.member, arr, oldKey],
-         'array',
-         'Please Pass Array data'
+        this,
+        _changeKeys,
+        3,
+        arguments,
+        [this.member, arr, oldKey],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.changeValues = function(arr, key, value) {
+_ut .changeValues = function (arr, key, value) {
     return _common.call(
-        this, 
-         _changeValues,
-         3,
-         arguments,
-         [this.member, arr, key],
-         'array',
-         'Please Pass Array data'
+        this,
+        _changeValues,
+        3,
+        arguments,
+        [this.member, arr, key],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.filter = function(arr, callback) {
+_ut .filter = function (arr, callback) {
     return _common.call(
-        this, 
+        this,
         _filter,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.each = function(arr, callback) {
+_ut .each = function (arr, callback) {
     return _common.call(
-        this, 
+        this,
         _each,
-         2,
-         arguments,
-         [this.member, arr],
-         'both',
-         'Please Pass an Object'
+        2,
+        arguments,
+        [this.member, arr],
+        'both',
+        'Please Pass an Object'
     );
 }
 
-ut.every = function(arr, callback) {
+_ut .every = function (arr, callback) {
     return _common.call(
-        this, 
+        this,
         _every,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.some = function(arr, callback) {
+_ut .some = function (arr, callback) {
     return _common.call(
-        this, 
+        this,
         _some,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.filterFirstLevelObjectKeys = function(obj, key) {
+_ut .filterFirstLevelObjectKeys = function (obj, key) {
     return _common.call(
-        this, 
+        this,
         _filterFirstLevelObjectKeys,
-         2,
-         arguments,
-         [this.member, obj],
-         'object',
-         'Please Pass Object data'
+        2,
+        arguments,
+        [this.member, obj],
+        'object',
+        'Please Pass Object data'
     );
 }
 
-ut.filterFirstLevelArrayKeys = function(arr, key) {
+_ut .filterFirstLevelArrayKeys = function (arr, key) {
     return _common.call(
-        this, 
+        this,
         _filterFirstLevelArrayKeys,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.filterObjectKeys = function(obj, key) {
+_ut .filterObjectKeys = function (obj, key) {
     return _common.call(
-        this, 
+        this,
         _filterObjectKeys,
-         2,
-         arguments,
-         [this.member, obj],
-         'object',
-         'Please Pass Object data'
+        2,
+        arguments,
+        [this.member, obj],
+        'object',
+        'Please Pass Object data'
     );
 }
 
-ut.filterArrayKeys = function(arr, key) {
+_ut .filterArrayKeys = function (arr, key) {
     return _common.call(
-        this, 
+        this,
         _filterArrayKeys,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.deepFilterObjectKeys = function(obj, key) {
+_ut .deepFilterObjectKeys = function (obj, key) {
     return _common.call(
-        this, 
+        this,
         _deepFilterObjectKeys,
-         2,
-         arguments,
-         [this.member, obj],
-         'object',
-         'Please Pass Object data'
+        2,
+        arguments,
+        [this.member, obj],
+        'object',
+        'Please Pass Object data'
     );
 }
 
-ut.deepFilterArrayKeys = function(arr, key) {
+_ut .deepFilterArrayKeys = function (arr, key) {
     return _common.call(
-        this, 
+        this,
         _deepFilterArrayKeys,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.concat = function(arr1, arr2) {
+_ut .concat = function (arr1, arr2) {
     return _common.call(
-        this, 
+        this,
         _concat,
-         2,
-         arguments,
-         [this.member, arr1],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr1],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.slice = function(arr, start, end) {
+_ut .slice = function (arr, start, end) {
     return _common.call(
-        this, 
+        this,
         _slice,
-         3,
-         arguments,
-         [this.member, arr, start],
-         'array',
-         'Please Pass Array data'
+        3,
+        arguments,
+        [this.member, arr, start],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.map = function(arr, callback) {
+_ut .map = function (arr, callback) {
     return _common.call(
-        this, 
+        this,
         _map,
-         2,
-         arguments,
-         [this.member, arr],
-         'array',
-         'Please Pass Array data'
+        2,
+        arguments,
+        [this.member, arr],
+        'array',
+        'Please Pass Array data'
     );
 }
 
-ut.repeat = function(item, count) {
+_ut .repeat = function (item, count) {
     return _common.call(
-        this, 
+        this,
         _repeat,
-         2,
-         arguments,
-         [this.member, item],
-         'both',
-         'Please an Object'
+        2,
+        arguments,
+        [this.member, item],
+        'both',
+        'Please an Object'
     );
 }
 
-ut.val = function() {
+_ut .val = function () {
     return this.member;
 }
+
+return _ut ;
+})();

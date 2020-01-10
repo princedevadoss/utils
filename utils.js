@@ -4,14 +4,22 @@ var ut = (function () {
 
     _ut.member = null;
 
+    /**
+     * checking the type of given data.
+     * @param {object} data 
+     * @param {string} type 
+     * @returns {boolean}
+     */
     function checkForType(data, type) {
-        switch (type) {
-            case 'object':
-                return (typeof data === 'object' && data.constructor === Object) ? true : false;
-            case 'array':
-                return (typeof data === 'object' && data.constructor === Array) ? true : false;
-            case 'both':
-                return (typeof data === 'object') ? true : false;
+        if (typeof data === 'object') {
+            switch (type) {
+                case 'object':
+                    return (data.constructor === Object) ? true : false;
+                case 'array':
+                    return (data.constructor === Array) ? true : false;
+                case 'both':
+                    return true;
+            }
         }
     }
 
